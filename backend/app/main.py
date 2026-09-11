@@ -1,22 +1,3 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base, SessionLocal
-from .routers import delivery, marketplace, payments, admin, ratings, auth
-from . import models
-
-Base.metadata.create_all(bind=engine)
-
-app = FastAPI(title="HostleHive API", version="1.0.0")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Auto-seed database on startup if empty
 @app.on_event("startup")
 def startup_event():
     db = SessionLocal()
@@ -56,16 +37,30 @@ def startup_event():
             )
             db.add_all([admin_user, student_user])
             db.commit()
+
+        # Seed sample delivery job and marketplace listing if empty
+        if db.query(models.DeliveryJob).count() == 0:
+            student = db.query(models.User).filter_by(email="rahul@lpu.in").first()
+            student_id = student.id if student else 2
+            
+            sample_job = models.DeliveryJob(
+                title="Cafeteria Snack Run",
+                description="Deliver food court items to Hostel 12",
+                pickup_location_id=1,
+                dropoff_location_id=3,
+                reward=50.0,
+                user_id=student_id,
+                status="pending"
+            )
+            sample_listing = models.MarketplaceListing(
+                title="Calculus Textbook",
+                description="Barely used engineering math book",
+                price=300.0,
+                category="Books",
+                user_id=student_id,
+                status="available"
+            )
+            db.add_all([sample_job, sample_listing])
+            db.commit()
     finally:
         db.close()
-
-app.include_router(auth.router)
-app.include_router(delivery.router)
-app.include_router(marketplace.router)
-app.include_router(payments.router)
-app.include_router(admin.router)
-app.include_router(ratings.router)
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to HostleHive API"}
