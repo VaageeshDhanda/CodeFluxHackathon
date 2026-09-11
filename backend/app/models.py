@@ -13,7 +13,7 @@ class RequestSourceType(str, Enum):
     WEB = "web"
     MOBILE = "mobile"
     API = "api"
-
+    EXTERNAL_PARCEL = "external_parcel"
 class University(Base):
     __tablename__ = "universities"
     id = Column(Integer, primary_key=True, index=True)
