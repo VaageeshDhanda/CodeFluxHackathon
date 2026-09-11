@@ -1,5 +1,18 @@
+from enum import Enum
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Float
 from .database import Base
+
+class DeliveryStatus(str, Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+class RequestSourceType(str, Enum):
+    WEB = "web"
+    MOBILE = "mobile"
+    API = "api"
 
 class University(Base):
     __tablename__ = "universities"
