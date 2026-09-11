@@ -55,29 +55,6 @@ def startup_event():
             )
             db.add_all([admin_user, student_user])
             db.commit()
-
-        if db.query(models.DeliveryJob).count() == 0:
-            student = db.query(models.User).filter_by(email="rahul@lpu.in").first()
-            student_id = student.id if student else 2
-            
-            sample_job = models.DeliveryJob(
-                description="Deliver food court items to Hostel 12",
-                pickup_location_id=1,
-                dropoff_location_id=3,
-                reward=50.0,
-                user_id=student_id,
-                status="pending"
-            )
-            sample_listing = models.MarketplaceListing(
-                title="Calculus Textbook",
-                description="Barely used engineering math book",
-                price=300.0,
-                category="Books",
-                user_id=student_id,
-                status="available"
-            )
-            db.add_all([sample_job, sample_listing])
-            db.commit()
     finally:
         db.close()
 
