@@ -14,6 +14,13 @@ class RequestSourceType(str, Enum):
     MOBILE = "mobile"
     API = "api"
     EXTERNAL_PARCEL = "external_parcel"
+
+class PaymentMethod(str, Enum):
+    SIMULATED_UPI = "simulated_upi"
+    CASH = "cash"
+    CARD = "card"
+    UPI = "upi"
+
 class University(Base):
     __tablename__ = "universities"
     id = Column(Integer, primary_key=True, index=True)
