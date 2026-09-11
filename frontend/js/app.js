@@ -141,17 +141,17 @@ async function loadAvailablePartnerJobs() {
         }
 
         jobs.forEach(job => {
-            container.innerHTML += `
-                <div class="job-card">
-                    <div class="job-route">📍 Loc ${job.pickup_location_id} → 🏠 Loc ${job.drop_location_id}</div>
-                    <div class="job-details">
-                        <span>Fee + Tip</span>
-                        <span class="job-price">₹${job.total_fee}</span>
-                    </div>
-                    <button onclick="acceptPartnerJob(${job.id})" style="padding: 8px; font-size: 14px;">ACCEPT JOB</button>
-                </div>
-            `;
-        });
+    container.innerHTML += `
+        <div class="job-card">
+            <div class="job-route">📍 Loc ${job.pickup_location_id} → 🏠 Loc ${job.dropoff_location_id}</div>
+            <div class="job-details">
+                <span>Fee + Tip</span>
+                <span class="job-price">₹${job.total_fee}</span>
+            </div>
+            <button onclick="acceptPartnerJob(${job.id})" style="padding: 8px; font-size: 14px;">ACCEPT JOB</button>
+        </div>
+    `;
+});
     } catch (e) {
         container.innerHTML = `<p style="color: red;">Failed to load feed</p>`;
     }
