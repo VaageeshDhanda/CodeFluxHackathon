@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'https://hostlehive-backend.onrender.com';
 const LPU_UNIV_ID = 1;
 
 // --- Auth & Session Helpers ---
