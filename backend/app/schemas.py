@@ -54,6 +54,13 @@ class OTPVerifyRequest(BaseModel):
     class Config:
         from_attributes = True
 
+class OTPVerification(BaseModel):
+    email: str
+    otp: str
+
+    class Config:
+        from_attributes = True
+
 class DeliveryRequestCreate(BaseModel):
     description: str
     pickup_location_id: int
