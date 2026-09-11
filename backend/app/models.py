@@ -1,100 +1,62 @@
-from pydantic import BaseModel, Field
-from typing import Optional
-from .models import DeliveryStatus, RequestSourceType, PaymentMethod
+from enum import Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Float
+from .database import Base
 
-class UniversityBase(BaseModel):
-    name: str
+class DeliveryStatus(str, Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
 
-class UniversityResponse(UniversityBase):
-    id: int
+class RequestSourceType(str, Enum):
+    WEB = "web"
+    MOBILE = "mobile"
+    API = "api"
+    EXTERNAL_PARCEL = "external_parcel"
 
-    class Config:
-        from_attributes = True
+class PaymentMethod(str, Enum):
+    SIMULATED_UPI = "simulated_upi"
+    CASH = "cash"
+    CARD = "card"
+    UPI = "upi"
 
-class LocationBase(BaseModel):
-    name: str
-    university_id: int
+class University(Base):
+    __tablename__ = "universities"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
 
-class LocationResponse(LocationBase):
-    id: int
+class Location(Base):
+    __tablename__ = "locations"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    university_id = Column(Integer, ForeignKey("universities.id"))
 
-    class Config:
-        from_attributes = True
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String, unique=True, index=True)
+    password = Column(String)
+    university_id = Column(Integer, ForeignKey("universities.id"))
+    is_admin = Column(Boolean, default=False)
 
-class UserCreate(BaseModel):
-    name: str
-    email: str
-    password: str
-    university_id: int
-    is_admin: Optional[bool] = False
+class DeliveryJob(Base):
+    __tablename__ = "delivery_jobs"
+    id = Column(Integer, primary_key=True, index=True)
+    description = Column(String)
+    pickup_location_id = Column(Integer, ForeignKey("locations.id"))
+    dropoff_location_id = Column(Integer, ForeignKey("locations.id"))
+    reward = Column(Float)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    status = Column(String, default="pending")
 
-    class Config:
-        from_attributes = True
-
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    university_id: int
-    is_admin: bool
-
-    class Config:
-        from_attributes = True
-
-class DeliveryRequestCreate(BaseModel):
-    description: str
-    pickup_location_id: int
-    dropoff_location_id: int
-    reward: float
-    source_type: RequestSourceType = RequestSourceType.EXTERNAL_PARCEL
-    tip: float = Field(default=0.0, ge=0.0)
-
-    class Config:
-        from_attributes = True
-
-class DeliveryRequestResponse(BaseModel):
-    id: int
-    description: str
-    pickup_location_id: int
-    dropoff_location_id: int
-    reward: float
-    user_id: int
-    status: str
-
-    class Config:
-        from_attributes = True
-
-class JobAcceptRequest(BaseModel):
-    notes: Optional[str] = None
-
-    class Config:
-        from_attributes = True
-
-class MarketplaceListingCreate(BaseModel):
-    title: str
-    description: str
-    price: float
-    category: str
-
-    class Config:
-        from_attributes = True
-
-class MarketplaceListingResponse(BaseModel):
-    id: int
-    title: str
-    description: str
-    price: float
-    category: str
-    user_id: int
-    status: str
-
-    class Config:
-        from_attributes = True
-
-class PaymentCreate(BaseModel):
-    amount: float
-    method: PaymentMethod = PaymentMethod.SIMULATED_UPI
-    job_id: Optional[int] = None
-
-    class Config:
-        from_attributes = True
+class MarketplaceListing(Base):
+    __tablename__ = "marketplace_listings"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    price = Column(Float)
+    category = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    status = Column(String, default="available")

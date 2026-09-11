@@ -2,6 +2,45 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from .models import DeliveryStatus, RequestSourceType, PaymentMethod
 
+class UniversityBase(BaseModel):
+    name: str
+
+class UniversityResponse(UniversityBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+class LocationBase(BaseModel):
+    name: str
+    university_id: int
+
+class LocationResponse(LocationBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+    university_id: int
+    is_admin: Optional[bool] = False
+
+    class Config:
+        from_attributes = True
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    university_id: int
+    is_admin: bool
+
+    class Config:
+        from_attributes = True
+
 class DeliveryRequestCreate(BaseModel):
     description: str
     pickup_location_id: int
@@ -27,6 +66,27 @@ class DeliveryRequestResponse(BaseModel):
 
 class JobAcceptRequest(BaseModel):
     notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class MarketplaceListingCreate(BaseModel):
+    title: str
+    description: str
+    price: float
+    category: str
+
+    class Config:
+        from_attributes = True
+
+class MarketplaceListingResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    price: float
+    category: str
+    user_id: int
+    status: str
 
     class Config:
         from_attributes = True
