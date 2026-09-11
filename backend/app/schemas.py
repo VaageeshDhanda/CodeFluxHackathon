@@ -25,6 +25,12 @@ class DeliveryRequestResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class JobAcceptRequest(BaseModel):
+    notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 class PaymentCreate(BaseModel):
     amount: float
     method: PaymentMethod = PaymentMethod.SIMULATED_UPI
