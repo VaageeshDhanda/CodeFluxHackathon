@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostleHive - Activity</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+    <header>
+        <h1>Activity & Deliveries</h1>
+    </header>
+
+    <main class="container">
+        <h2 class="section-title">Active Deliveries</h2>
+        <div id="activity-container">
+            <p style="color: var(--text-muted); font-size: 14px;">Loading active tasks...</p>
+        </div>
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">Home</div>
+        <div class="nav-item" onclick="window.location.href='marketplace.html'">Market</div>
+        <div class="nav-item active" onclick="window.location.href='activity.html'">Activity</div>
+        <div class="nav-item" onclick="window.location.href='profile.html'">Profile</div>
+    </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthGuard();
+        loadActivityPage();
+    });
+
+    async function loadActivityPage() {
+        const user = getLoggedInUser();
+        const container = document.getElementById('activity-container');
+        if (!container) return;
+
+        try {
+            const res = await fetch(`${API_URL}/delivery/jobs/active/${user ? user.id : 1}`);
+            const jobs = await res.json();
+            
+            container.innerHTML = '';
+            
+            if (jobs.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">You have no active delivery tasks right now.</p>`;
+                return;
+            }
+
+            jobs.forEach(job => {
+                container.innerHTML += `
+                    <div class="job-card" style="border-left-color: var(--success);">
+                        <div class="job-route">Delivery Job #${job.id}</div>
+                        <div style="margin: 12px 0; font-size: 14px; color: var(--text-muted);">
+                            <div>Status: <span style="font-weight: bold; color: var(--primary);">${job.status}</span></div>
+                        </div>
+                        <button onclick="promptForOTP(${job.id})" style="background: var(--success); padding: 10px; font-size: 14px;">Enter OTP to Complete</button>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            container.innerHTML = `<p style="color: red;">Failed to load activities.</p>`;
+        }
+    }
+
+    async function promptForOTP(jobId) {
+        const enteredOTP = prompt("Enter the 4-digit OTP provided by the recipient:");
+        if (!enteredOTP) return;
+
+        try {
+            const res = await fetch(`${API_URL}/delivery/jobs/complete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ job_id: jobId, otp_code: enteredOTP })
+            });
+            
+            const data = await res.json();
+            if (res.ok) {
+                alert("Delivery Completed Successfully!");
+                loadActivityPage();
+            } else {
+                alert("Failed: " + data.detail); 
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+</script>
+</body>
+</html>

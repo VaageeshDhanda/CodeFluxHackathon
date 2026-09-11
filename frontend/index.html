@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostleHive - Home</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <h1>HostleHive</h1>
+        <!-- Enhanced Mode Switcher Pill Component -->
+        <div class="mode-pill-container" onclick="toggleUserMode()">
+            <div id="mode-pill-slider" class="mode-pill-slider customer"></div>
+            <span class="mode-label active" id="label-customer">Customer</span>
+            <span class="mode-label" id="label-partner">Partner</span>
+        </div>
+    </header>
+
+    <!-- CUSTOMER HOME VIEW -->
+    <main id="view-customer-home" class="container">
+        <h2 class="section-title">What do you need?</h2>
+        
+        <div class="action-card" onclick="window.location.href='request-delivery.html'">
+            <h3>📦 Get my parcel</h3>
+            <p>Request pickup from a campus delivery office</p>
+        </div>
+        
+        <div class="action-card" onclick="window.location.href='marketplace.html'">
+            <h3>🌙 Marketplace</h3>
+            <p>Buy or sell late-night snacks & essentials</p>
+        </div>
+        
+        <div class="action-card" onclick="window.location.href='activity.html'">
+            <h3>📊 Active Deliveries & Activity</h3>
+            <p>Track your ongoing orders and OTP status</p>
+        </div>
+    </main>
+
+    <!-- DELIVERY PARTNER HOME VIEW -->
+    <main id="view-partner-home" class="container hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h2 class="section-title" style="margin: 0;">Partner Feed</h2>
+            <div id="status-badge" class="partner-toggle online" onclick="toggleOnlineStatus()">ONLINE</div>
+        </div>
+        
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Max 3 active parcels allowed at once[cite: 2, 3].</p>
+        <div id="jobs-container">
+            <p style="color: var(--text-muted); font-size: 14px;">Loading available jobs...</p>
+        </div>
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="window.location.href='index.html'">Home</div>
+        <div class="nav-item" onclick="window.location.href='marketplace.html'">Market</div>
+        <div class="nav-item" onclick="window.location.href='activity.html'">Activity</div>
+        <div class="nav-item" onclick="window.location.href='profile.html'">Profile</div>
+    </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthGuard();
+        initHomeModeUI();
+    });
+</script>
+</body>
+</html>

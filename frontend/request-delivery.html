@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostleHive - Request Delivery</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+    <header>
+        <h1>Request Delivery</h1>
+    </header>
+
+    <main class="container">
+        <h2 class="section-title">Parcel Details</h2>
+        
+        <label>Where is it?</label>
+        <select id="pickup-loc">
+            <option value="1">Delivery Office 4</option>
+            <option value="2">Delivery Office 7</option>
+            <option value="5">Main Mall Store</option>
+        </select>
+
+        <label>Where to?</label>
+        <select id="drop-loc">
+            <option value="3">Hostel 12</option>
+            <option value="4">Hostel 4</option>
+            <option value="6">Block 34</option>
+        </select>
+
+        <label>Tip (₹)</label>
+        <input type="number" id="tip-amount" value="0" min="0">
+
+        <button onclick="submitDeliveryRequest()">Request Delivery (₹<span id="est-total">10</span>)</button>
+        <button onclick="window.location.href='index.html'" style="background: transparent; color: var(--text-muted); margin-top: 12px; border: 1px solid #D1D5DB;">Cancel</button>
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="window.location.href='index.html'">Home</div>
+        <div class="nav-item" onclick="window.location.href='marketplace.html'">Market</div>
+        <div class="nav-item" onclick="window.location.href='activity.html'">Activity</div>
+        <div class="nav-item" onclick="window.location.href='profile.html'">Profile</div>
+    </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthGuard();
+        const tipInput = document.getElementById('tip-amount');
+        if(tipInput) {
+            tipInput.addEventListener('input', (e) => {
+                const base = 10;
+                const tip = parseFloat(e.target.value) || 0;
+                document.getElementById('est-total').textContent = base + tip;
+            });
+        }
+    });
+
+    async function submitDeliveryRequest() {
+        const user = getLoggedInUser();
+        const payload = {
+            requester_id: user ? user.id : 1,
+            pickup_location_id: parseInt(document.getElementById('pickup-loc').value),
+            drop_location_id: parseInt(document.getElementById('drop-loc').value),
+            source_type: "EXTERNAL_PARCEL",
+            tip: parseFloat(document.getElementById('tip-amount').value) || 0
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/delivery/requests`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (res.ok) {
+                alert("Delivery requested successfully!");
+                window.location.href = 'activity.html';
+            } else {
+                const err = await res.json();
+                alert("Error: " + err.detail);
+            }
+        } catch (e) {
+            alert("Error connecting to server");
+        }
+    }
+</script>
+</body>
+</html>

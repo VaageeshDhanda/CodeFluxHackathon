@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostleHive - My Profile</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+    <header>
+        <h1>My Profile</h1>
+        <button onclick="handleLogout()" style="width: auto; padding: 6px 12px; font-size: 13px; background: #DC2626;">Log Out</button>
+    </header>
+
+    <main class="container">
+        <div class="job-card" style="border-left-color: var(--primary); text-align: center; padding: 20px; margin-bottom: 24px;">
+            <div style="font-size: 36px; margin-bottom: 6px;">👤</div>
+            <h2 id="profile-name" style="font-size: 18px; margin-bottom: 2px;">Loading...</h2>
+            <p id="profile-email" style="color: var(--text-muted); font-size: 13px; margin-bottom: 4px;"></p>
+            <p style="color: var(--success); font-size: 12px; font-weight: 600;">✓ Verified University User</p>
+        </div>
+
+        <h3 class="section-title">Active Listings</h3>
+        <div id="profile-active-listings">
+            <p style="color: var(--text-muted); font-size: 13px;">Loading active listings...</p>
+        </div>
+
+        <h3 class="section-title" style="margin-top: 24px;">Expired Listings</h3>
+        <div id="profile-expired-listings">
+            <p style="color: var(--text-muted); font-size: 13px;">No expired listings.</p>
+        </div>
+
+        <h3 class="section-title" style="margin-top: 24px;">Completed Listings</h3>
+        <div id="profile-completed-listings">
+            <p style="color: var(--text-muted); font-size: 13px;">No completed listings yet.</p>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">Home</div>
+        <div class="nav-item" onclick="window.location.href='marketplace.html'">Market</div>
+        <div class="nav-item" onclick="window.location.href='activity.html'">Activity</div>
+        <div class="nav-item active" onclick="window.location.href='profile.html'">Profile</div>
+    </nav>
+</div>
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthGuard();
+        loadProfileData();
+        loadUserProfileListings();
+    });
+</script>
+</body>
+</html>

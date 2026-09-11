@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostleHive - Admin Panel</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+    <header>
+        <h1 style="color: #DC2626;">Admin Panel</h1>
+        <button onclick="window.location.href='index.html'" style="width: auto; padding: 6px 12px; font-size: 13px;">Exit Admin</button>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div class="job-card" style="flex: 1; text-align: center; margin: 0; border-left: none;">
+                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="admin-active-jobs">0</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Active Jobs</div>
+            </div>
+            <div class="job-card" style="flex: 1; text-align: center; margin: 0; border-left: none;">
+                <div style="font-size: 24px; font-weight: bold; color: var(--success);" id="admin-listings">0</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Listings</div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 16px; margin-bottom: 12px;">Simulated Payments Log</h3>
+        <div id="admin-payments-container">
+            <p style="color: var(--text-muted); font-size: 14px;">Loading system data...</p>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">Home</div>
+        <div class="nav-item" onclick="window.location.href='marketplace.html'">Market</div>
+        <div class="nav-item" onclick="window.location.href='activity.html'">Activity</div>
+        <div class="nav-item" onclick="window.location.href='profile.html'">Profile</div>
+    </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthGuard();
+        loadAdminDashboard();
+    });
+
+    async function loadAdminDashboard() {
+        try {
+            const res = await fetch(`${API_URL}/admin/dashboard`);
+            const data = await res.json();
+            
+            document.getElementById('admin-active-jobs').textContent = data.active_deliveries;
+            document.getElementById('admin-listings').textContent = data.active_listings;
+            
+            const container = document.getElementById('admin-payments-container');
+            container.innerHTML = '';
+            
+            if (data.recent_payments.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">No payments recorded yet.</p>`;
+                return;
+            }
+
+            data.recent_payments.forEach(payment => {
+                const isPending = payment.status === 'PENDING';
+                let statusColor = isPending ? '#F59E0B' : 'var(--success)';
+                if (payment.status === 'OVERRIDDEN') statusColor = '#DC2626';
+
+                container.innerHTML += `
+                    <div class="job-card" style="border-left-color: ${statusColor}; margin-bottom: 8px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">${payment.transaction_id}</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">₹${payment.amount} • <span style="color: ${statusColor}; font-weight: bold;">${payment.status}</span></div>
+                            </div>
+                            ${isPending ? `<button onclick="overridePayment(${payment.id})" style="width: auto; padding: 6px 12px; font-size: 12px; background: #DC2626;">OVERRIDE</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            console.error("Failed to load admin dashboard", e);
+        }
+    }
+
+    async function overridePayment(paymentId) {
+        if(!confirm("Force this payment to OVERRIDDEN status?")) return;
+        try {
+            const res = await fetch(`${API_URL}/admin/payments/${paymentId}/override`, { method: 'POST' });
+            if(res.ok) {
+                alert("Payment successfully overridden.");
+                loadAdminDashboard();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+</script>
+</body>
+</html>

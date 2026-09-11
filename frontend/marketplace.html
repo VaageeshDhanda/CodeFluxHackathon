@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostleHive - Marketplace</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+    <header>
+        <h1>Marketplace</h1>
+        <button onclick="openCreateListingModal()" style="width: auto; padding: 6px 12px; font-size: 13px;">+ Sell Item</button>
+    </header>
+
+    <main class="container">
+        <h2 class="section-title">Available Late-Night Goods</h2>
+        <div id="marketplace-container">
+            <p style="color: var(--text-muted); font-size: 14px;">Loading listings...</p>
+        </div>
+    </main>
+
+    <!-- CREATE LISTING MODAL -->
+    <div id="listing-modal" class="modal-overlay hidden">
+        <div class="payment-modal" style="text-align: left;">
+            <h3 style="margin-bottom: 12px;">List an Item</h3>
+            <label>Item Name</label>
+            <input type="text" id="list-name" placeholder="Coke Bottle">
+            <label>Reference Price (₹)</label>
+            <input type="number" id="list-ref" placeholder="40">
+            <label>Your Price (Max 1.5x)</label>
+            <input type="number" id="list-price" placeholder="50">
+            <label>Quantity</label>
+            <input type="number" id="list-qty" value="1">
+            <label>Pickup Location ID</label>
+            <input type="number" id="list-loc" value="3">
+            
+            <button onclick="submitNewListing()" style="margin-bottom: 8px;">Publish Listing</button>
+            <button onclick="closeCreateListingModal()" style="background: transparent; color: var(--text-muted); border: 1px solid #E5E7EB;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- SIMULATED PAYMENT MODAL -->
+    <div id="payment-modal" class="modal-overlay hidden">
+        <div class="payment-modal">
+            <h3>Simulated Payment</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Scan via HostleHive UPI</p>
+            <div class="qr-placeholder">[ FAKE QR CODE ]</div>
+            <p id="payment-amount" style="font-size: 24px; font-weight: bold; margin-bottom: 16px;">₹0.00</p>
+            <button onclick="processSimulatedPayment()" style="background: var(--success); margin-bottom: 8px;">Simulate Successful Scan</button>
+            <button onclick="closePaymentModal()" style="background: transparent; color: var(--text-muted); border: 1px solid #E5E7EB;">Cancel</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">Home</div>
+        <div class="nav-item active" onclick="window.location.href='marketplace.html'">Market</div>
+        <div class="nav-item" onclick="window.location.href='activity.html'">Activity</div>
+        <div class="nav-item" onclick="window.location.href='profile.html'">Profile</div>
+    </nav>
+</div>
+<script src="js/app.js"></script>
+<script>document.addEventListener("DOMContentLoaded", loadMarketplace);</script>
+</body>
+</html>
