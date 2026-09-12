@@ -92,20 +92,23 @@ class JobAcceptRequest(BaseModel):
         from_attributes = True
 
 class MarketplaceListingCreate(BaseModel):
-    title: str
-    description: str
-    price: float
-    category: str
+    seller_id: int
+    item_name: str
+    reference_price: Optional[float] = 0.0
+    listing_price: float
+    quantity: int = 1
+    location_id: int
 
     class Config:
         from_attributes = True
 
 class MarketplaceListingResponse(BaseModel):
     id: int
-    title: str
-    description: str
-    price: float
-    category: str
+    item_name: str
+    reference_price: Optional[float]
+    listing_price: float
+    quantity: int
+    location_id: Optional[int]
     user_id: int
     status: str
 

@@ -48,13 +48,11 @@ def get_active_listings(university_id: int, db: Session = Depends(get_db)):
 
 @router.get("/user/{user_id}/listings")
 def get_user_listings(user_id: int, db: Session = Depends(get_db)):
-    listings = db.query(models.MarketplaceListing).filter(
-        models.MarketplaceListing.seller_id == user_id
-    ).all()
+    listings = db.query(models.MarketplaceListing).filter(models.MarketplaceListing.user_id == user_id).all()
     
-    active = [l for l in listings if l.status == models.MarketplaceStatus.ACTIVE]
-    expired = [l for l in listings if l.status == models.MarketplaceStatus.EXPIRED]
-    completed = [l for l in listings if l.status == models.MarketplaceStatus.SOLD or l.status == models.MarketplaceStatus.COMPLETED]
+    active = [item for item in listings if item.status == "active" or item.status == "available"]
+    expired = [item for item in listings if item.status == "expired"]
+    completed = [item for item in listings if item.status == "completed"]
     
     return {
         "active": active,

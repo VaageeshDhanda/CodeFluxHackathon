@@ -56,9 +56,10 @@ class DeliveryJob(Base):
 class MarketplaceListing(Base):
     __tablename__ = "marketplace_listings"
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    description = Column(String)
-    price = Column(Float)
-    category = Column(String)
+    item_name = Column(String)
+    reference_price = Column(Float, nullable=True)
+    listing_price = Column(Float)
+    quantity = Column(Integer, default=1)
+    location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    status = Column(String, default="available")
+    status = Column(String, default="active")
