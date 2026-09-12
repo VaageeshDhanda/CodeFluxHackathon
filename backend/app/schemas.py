@@ -62,6 +62,7 @@ class OTPVerification(BaseModel):
         from_attributes = True
 
 class DeliveryRequestCreate(BaseModel):
+    requester_id: int
     description: str
     pickup_location_id: int
     dropoff_location_id: int

@@ -61,7 +61,7 @@ def get_available_delivery_requests(university_id: int, db: Session = Depends(ge
         } for j in fallback_jobs]
 
 @router.post("/jobs/{job_id}/accept")
-def accept_delivery_job(job_id: int, payload: schemas.PartnerAcceptCreate, db: Session = Depends(get_db)):
+def accept_delivery_job(job_id: int, payload: schemas.JobAcceptRequest, db: Session = Depends(get_db)):
     job = db.query(models.DeliveryJob).filter(models.DeliveryJob.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -69,8 +69,6 @@ def accept_delivery_job(job_id: int, payload: schemas.PartnerAcceptCreate, db: S
         raise HTTPException(status_code=400, detail="Job is no longer available")
     
     job.status = "accepted"
-    if hasattr(job, "partner_id"):
-        job.partner_id = payload.partner_id
     db.commit()
     db.refresh(job)
     return {"message": "Job accepted successfully", "demo_otp_revealed": "1234"}
