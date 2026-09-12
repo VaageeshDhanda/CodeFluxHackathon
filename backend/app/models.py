@@ -44,11 +44,13 @@ class User(Base):
 class DeliveryJob(Base):
     __tablename__ = "delivery_jobs"
     id = Column(Integer, primary_key=True, index=True)
-    description = Column(String)
+    description = Column(String, nullable=True)
     pickup_location_id = Column(Integer, ForeignKey("locations.id"))
     dropoff_location_id = Column(Integer, ForeignKey("locations.id"))
     reward = Column(Float)
     user_id = Column(Integer, ForeignKey("users.id"))
+    source_type = Column(String, default="external_parcel")
+    tip = Column(Float, default=0.0)
     status = Column(String, default="pending")
 
 class MarketplaceListing(Base):

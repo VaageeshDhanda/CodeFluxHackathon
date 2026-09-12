@@ -15,7 +15,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"], 
 )
+from .database import engine
+from . import models
 
+@app.on_event("startup")
+def startup_event():
+    # WARNING: This temporarily drops the delivery_jobs table to force recreation with new columns.
+    # Remove this block after your next successful deploy so you don't lose data in the future!
+    models.DeliveryJob.__table__.drop(bind=engine, checkfirst=True)
+    models.Base.metadata.create_all(bind=engine)
+    
 @app.on_event("startup")
 def startup_event():
     db = SessionLocal()
